@@ -209,6 +209,7 @@ const rick = () => { location.href = CONFIG.rickroll; };
 const fmt = d => d.toLocaleDateString("en-GB",{day:"2-digit",month:"2-digit",year:"numeric"}).replace(/\//g,".");
 const S = (()=>{try{return JSON.parse(localStorage.getItem("st")||"{}")}catch(e){return {}}})();
 const save = () => { try{localStorage.setItem("st",JSON.stringify(S))}catch(e){} };
+  const track = (name) => { try{ window.goatcounter && goatcounter.count({path:name, title:name, event:true}); }catch(e){} };
 function render(html){ document.body.className=""; document.documentElement.style.background=""; document.body.style.background=""; app.innerHTML = html; const i=app.querySelector("input"); if(i) i.focus(); }
 function intro(){
   playMusic("intro.mp3");
@@ -266,6 +267,7 @@ function hub(){
 }
 
 function open(n){
+  track("open-"+n.label);
   if(n.kind==="santa") return santa();
   if(n.kind==="discord") return discord(0);
   if(n.kind==="nmt") return nmt();
