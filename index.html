@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SYSTEM</title>
+<style>
+  .cred{position:fixed;inset:0;z-index:50;overflow:auto;background:#000;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif;padding:24px}
+.cred i{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.5}
+.cred p{margin:0;position:relative;text-shadow:0 0 14px rgba(255,255,255,.8)}
+.c1{font-size:clamp(34px,8vw,56px)}
+.c2{font-size:clamp(24px,6vw,38px);font-weight:600}
+.c3{font-size:clamp(18px,4vw,26px);color:#aaa;margin-top:36px!important}
+.cs{color:#050505;text-shadow:none!important;font-size:20px;letter-spacing:.2em}
+.cs::selection{background:#fff;color:#000}
+.cbtn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:10px;padding:12px 22px;font:inherit;cursor:pointer;margin-top:24px;position:relative}
+@media (prefers-reduced-motion:no-preference){
+  .cred i{animation:tw 4s infinite}@keyframes tw{50%{opacity:.1}}
+  .cred p{animation:fi 1.4s both}}
+:root{--g:#76ff9a;--dim:#2f7a45;--bg:#000}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--g);font-family:"DejaVu Sans Mono","Menlo","Consolas",monospace}
+main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 20px;gap:16px}
+h1{font-size:clamp(24px,5vw,40px);margin:0 0 6px;letter-spacing:.02em}
+p{margin:0;line-height:1.5;font-size:clamp(15px,2.6vw,20px)}
+.btn{background:var(--g);color:#000;border:0;font:700 20px Arial,sans-serif;padding:22px 40px;cursor:pointer;margin-top:16px}
+.btn:focus-visible,input:focus-visible,.node:focus-visible{outline:3px solid #fff;outline-offset:3px}
+input{background:#000;border:2px solid var(--g);color:var(--g);font:inherit;font-size:20px;padding:14px 16px;width:min(420px,88vw);text-align:center}
+.big{font-size:clamp(40px,12vw,96px);font-weight:700;font-variant-numeric:tabular-nums}
+.dim{color:var(--dim)}
+.msg{min-height:1.5em}
+.hub{position:relative;width:min(960px,96vw);height:min(560px,72vh);border:1px dashed var(--dim);margin-top:8px;
+  background:radial-gradient(circle at 50% 50%,rgba(118,255,154,.08),transparent 60%)}
+.node{position:absolute;transform:translate(-50%,-50%);background:#000;color:var(--g);border:2px solid var(--g);
+  font:inherit;font-size:clamp(12px,2vw,16px);padding:12px 14px;cursor:pointer;max-width:34%;text-align:center}
+.node:hover{background:var(--g);color:#000}
+.node.ph{width:clamp(84px,18vw,150px);height:clamp(84px,18vw,150px);padding:0;overflow:hidden;background:#041a0a center/cover}
+.node.ph span{display:block;background:rgba(0,0,0,.65);position:absolute;bottom:0;left:0;right:0;padding:4px;font-size:12px;color:var(--g)}
+.node.ph:hover span{background:var(--g);color:#000}
+@media (prefers-reduced-motion:no-preference){
+  .blink{animation:b 1s steps(2) infinite}@keyframes b{50%{opacity:0}}
+  .node{animation:f 6s ease-in-out infinite}.node:nth-child(2n){animation-duration:8s}.node:nth-child(3n){animation-delay:-3s}
+  @keyframes f{50%{margin-top:-8px}}}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.2) 0 1px,transparent 1px 3px)}
+body.alt::after{display:none}
+h1,.glow{text-shadow:0 0 8px rgba(118,255,154,.7),0 0 24px rgba(118,255,154,.35)}
+.cur::after{content:"\2588";margin-left:3px}
+@media (prefers-reduced-motion:no-preference){
+ .cur::after{animation:b 1s steps(2) infinite}
+ h1{animation:fl 5s infinite}@keyframes fl{0%,46%,52%,90%,100%{opacity:1}48%{opacity:.7}91%{opacity:.85}}
+ .pulse{animation:pl 1.8s ease-in-out infinite}@keyframes pl{50%{box-shadow:0 0 30px 6px rgba(118,255,154,.55)}}
+ .fadein{animation:fi .9s both}@keyframes fi{from{opacity:0;transform:translateY(10px)}}}
+.chip{background:rgba(255,255,255,.16);border-radius:999px;padding:10px 18px;font-size:15px}
+.card{width:min(560px,94vw);text-align:left;background:rgba(36,26,88,.55);border:1px solid rgba(255,255,255,.18);border-radius:24px;padding:28px;box-shadow:0 20px 60px rgba(20,10,60,.5)}
+.card h2{font-size:clamp(28px,6vw,40px);margin:0 0 8px;text-shadow:0 0 18px rgba(255,255,255,.35)}
+.card .sub{opacity:.8;font-size:16px;line-height:1.5;margin-bottom:16px}
+.hintbtn{background:rgba(255,255,255,.16);color:#fff;border:0;border-radius:10px;padding:12px 16px;font:inherit;font-size:15px;cursor:pointer}
+.hint{background:rgba(255,255,255,.12);border-radius:10px;padding:12px 16px;margin-top:10px;font-size:15px}
+.pz{background:#f6f6f8;color:#1b1b22;border-radius:14px;padding:20px;line-height:1.7;font-size:17px;margin:18px 0}
+.th-purple input{border-radius:12px;border:2px solid transparent;background:#fff;color:#111;width:100%;text-align:left;font-size:18px}
+.th-purple input:focus-visible{border-color:#2f7bff;outline:none;box-shadow:0 0 0 4px rgba(47,123,255,.35)}
+.send{background:#2f7bff;color:#fff;border:0;border-radius:10px;padding:14px 22px;font:inherit;font-size:17px;cursor:pointer;margin-top:12px}
+.card .msg{margin-top:10px;color:#ffd0d0}
+.dc{position:fixed;inset:0;z-index:5;display:flex;background:#1a1a1e;color:#dbdee1;text-align:left;font-family:"Segoe UI",system-ui,Arial,sans-serif}
+.rail{width:72px;flex:none;background:#111113;overflow-y:auto;padding:12px 0;display:flex;flex-direction:column;align-items:center;gap:10px}
+.srv{position:relative;width:48px;height:48px;flex:none;border:0;border-radius:16px;background:#2b2b30;color:#dbdee1;font:600 18px "Segoe UI",system-ui,sans-serif;cursor:pointer}
+.srv:hover,.srv.on{background:#5865f2;color:#fff;border-radius:12px}
+.srv.on::before{content:"";position:absolute;left:-12px;top:12px;width:4px;height:24px;background:#fff;border-radius:0 4px 4px 0}
+.srv:focus-visible,.ex:focus-visible{outline:3px solid #fff}
+.chs{width:230px;flex:none;border-right:1px solid #111}
+.chh{padding:16px;font-weight:700;border-bottom:1px solid #111}
+.ch{margin:8px;padding:8px 10px;background:#2b2b30;border-radius:6px}
+.chm{flex:1;display:flex;flex-direction:column;min-width:0}
+.chm header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #111;font-weight:600}
+.ex{background:#2b2b30;color:#dbdee1;border:0;border-radius:6px;padding:8px 12px;font:inherit;font-size:14px;cursor:pointer}
+.msgs{flex:1;overflow-y:auto;padding:16px}
+.wl{margin:40px 0 24px;text-align:center}.wl h3{font-size:32px;margin:0 0 6px;color:#fff}
+.mg{display:flex;gap:14px;margin:16px 0}
+.av{width:40px;height:40px;border-radius:50%;background:#5865f2;flex:none;display:grid;place-items:center;font-weight:700;color:#fff}
+.mn{font-weight:600;color:#fff}.mt{color:#949ba4;font-size:12px;margin-left:8px}
+.mx{white-space:pre-wrap;line-height:1.4;overflow-wrap:anywhere}
+.inp{margin:0 16px 16px;padding:14px 16px;background:#242429;border-radius:8px;color:#6d6f78;font-size:14px}
+@media (max-width:700px){.chs{display:none}.rail{width:60px}}
+.back{position:fixed;top:14px;left:14px;z-index:20;background:rgba(0,0,0,.35);color:var(--g);border:2px solid var(--g);font:600 15px system-ui,Arial,sans-serif;padding:9px 16px;cursor:pointer}
+body.alt .back{color:#fff;border-color:rgba(255,255,255,.5);border-radius:10px}
+.back:focus-visible{outline:3px solid #fff}
+.nm{position:relative;width:min(660px,94vw);text-align:center;background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.2);border-radius:28px;padding:34px 28px;color:#fff;font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif;box-shadow:0 24px 70px rgba(0,10,60,.5)}
+.nm .ic{font-size:60px}
+.nm h2{margin:4px 0;font-size:clamp(32px,8vw,54px);line-height:1.1}
+.gold{color:#e0b64f}
+.nsub{margin:16px 0;line-height:1.6}
+.bar{height:4px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden;margin:16px 0}
+.bar i{display:block;height:100%;width:22%;background:#e0b64f}
+.dots{display:flex;gap:8px;justify-content:center;align-items:center;margin-bottom:16px}
+.dots i{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.55)}.dots i:last-child{width:9px;height:9px;background:rgba(255,255,255,.25)}
+.nbox{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:20px}
+.nbox h3{margin:0 0 10px;font-size:20px}
+.nbox p{font-size:15px;line-height:1.6;opacity:.9;margin-bottom:14px}
+.codes{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.codes label{display:block;font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:#e0b64f}
+.th-nmt input{background:rgba(255,255,255,.95);color:#0a1a5a;border:2px solid transparent;border-radius:10px;width:100%;padding:12px 6px;font-size:20px;margin-top:6px;text-align:center}
+.th-nmt input:focus-visible{border-color:#e0b64f;outline:none}
+.gbtn{background:#e0b64f;color:#1a1500;border:0;border-radius:10px;padding:14px 28px;font:700 17px system-ui,Arial,sans-serif;cursor:pointer;margin-top:14px}
+.nm .msg{margin-top:8px;color:#ffc9c9}
+@media (prefers-reduced-motion:no-preference){.bar i{animation:gr 2.5s ease-out both}@keyframes gr{from{width:4%}}}
+.ig{position:fixed;inset:0;z-index:5;display:flex;overflow-y:auto;background:#0c1014;color:#f5f5f5;text-align:left;font-family:system-ui,"Segoe UI",Roboto,Arial,sans-serif}
+.igr{width:72px;flex:none;display:flex;flex-direction:column;align-items:center;gap:26px;padding-top:70px;font-size:24px;position:sticky;top:0;align-self:flex-start;height:100vh}
+.igm{flex:1;max-width:935px;margin:0 auto;padding:56px 16px 40px}
+.igh{display:flex;gap:40px;align-items:center;flex-wrap:wrap}
+.iga{width:150px;height:150px;border-radius:50%;background:#262b31;overflow:hidden;flex:none}
+.iga img,.igho i img,.igg img{width:100%;height:100%;object-fit:cover;display:block}
+.igu{font-size:22px;font-weight:600;margin-bottom:14px}
+.igs{display:flex;gap:24px;margin-bottom:14px}
+.igb{min-height:1.4em;white-space:pre-wrap;line-height:1.4}
+.igbt{display:flex;gap:10px;margin:22px 0}.igbt span{flex:1;text-align:center;background:#262b31;border-radius:10px;padding:10px;font-weight:600;font-size:14px}
+.igho{display:flex;gap:22px;overflow-x:auto;padding:6px 0 18px}
+.igho div{text-align:center;font-size:13px;flex:none;width:84px}
+.igho i{display:block;width:78px;height:78px;border-radius:50%;background:#262b31;border:2px solid #3a4048;overflow:hidden;margin-bottom:6px}
+.igt{display:flex;justify-content:space-around;border-top:1px solid #262b31;padding:14px 0;color:#8b949e;font-size:22px}.igt .on{color:#fff}
+.igg{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.igg button{aspect-ratio:4/5;background:#262b31;border:0;padding:0;cursor:pointer;overflow:hidden}
+.igg button:focus-visible{outline:3px solid #fff;outline-offset:-3px}
+.lb{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;color:#fff;font-family:system-ui,Arial,sans-serif;cursor:pointer}
+.lb img{max-width:92vw;max-height:72vh}.lb p{max-width:600px;white-space:pre-wrap;line-height:1.5}
+@media (max-width:700px){.igr{display:none}.iga{width:96px;height:96px}.igh{gap:20px}}
+.node.main{border-color:#f0d98a;color:#f0d98a;font-size:clamp(15px,2.6vw,22px);padding:18px 24px;box-shadow:0 0 24px rgba(240,217,138,.45)}
+.node.main:hover{background:#f0d98a;color:#000}
+.mute{position:fixed;bottom:14px;right:14px;z-index:40;background:rgba(0,0,0,.55);color:#76ff9a;border:2px solid #76ff9a;font-size:20px;width:44px;height:44px;border-radius:50%;cursor:pointer}
+.mute.off{opacity:.45}
+.tpad{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.tpad button{background:#000;color:var(--g);border:2px solid var(--g);font:inherit;font-size:18px;padding:12px 16px;cursor:pointer}
+.lib{position:fixed;inset:0;z-index:5;overflow:auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#e8d9b0;font-family:Georgia,"Palatino Linotype",serif;text-align:center;padding:64px 16px 20px}
+.lib::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(1.5px 1.5px at 15% 25%,#fffa,transparent),radial-gradient(1.5px 1.5px at 70% 18%,#fffa,transparent),radial-gradient(1px 1px at 40% 40%,#fffa,transparent),radial-gradient(1.5px 1.5px at 85% 35%,#fffa,transparent),radial-gradient(1px 1px at 55% 12%,#fffa,transparent)}
+.moon{position:absolute;top:64px;right:8%;width:70px;height:70px;border-radius:50%;background:#f2ecd0;box-shadow:0 0 50px 12px rgba(242,236,208,.35)}
+.eyes{position:absolute;display:flex;gap:10px;opacity:.8}
+.eyes i{width:9px;height:6px;border-radius:50%;background:#d8ff6a;box-shadow:0 0 10px 3px #b6ff3a}
+@media (prefers-reduced-motion:no-preference){.eyes{opacity:0;animation:ey 8s infinite}@keyframes ey{0%,70%,100%{opacity:0}74%,92%{opacity:.9}}}
+.lt{font-size:clamp(30px,7vw,56px);letter-spacing:.12em;color:#f0d98a;text-shadow:0 0 18px rgba(240,217,138,.5)}
+.shelf{display:flex;align-items:flex-end;gap:6px;border-bottom:14px solid #4a2f1a;padding:0 14px;margin-top:20px;max-width:96vw;overflow-x:auto}
+.bk{width:54px;flex:none;border:0;border-radius:4px 4px 0 0;color:#fff3d6;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 3px rgba(0,0,0,.25);transition:transform .2s}
+.bk:hover,.bk:focus-visible{transform:translateY(-14px);outline:none}
+.bk span{writing-mode:vertical-rl;font:600 14px Georgia,serif;letter-spacing:.06em}
+.pgo{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.7);display:grid;place-items:center;padding:20px;cursor:pointer}
+.pgp{max-width:560px;background:#e8d9b0;color:#2a1e10;padding:30px;border-radius:6px;font-family:Georgia,serif;line-height:1.7;box-shadow:0 0 40px rgba(255,200,100,.25)}
+.pgp h2{margin:0 0 10px}
+.lkbar{width:min(520px,88vw);height:6px;background:rgba(118,255,154,.2)}
+.lkbar i{display:block;height:100%;width:0;background:var(--g);transition:width .6s}
+.lkgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:16px;width:min(1000px,96vw);margin-top:6px}
+.lk{--c:#ff8a8a;color:var(--c);border:2px solid var(--c);background:rgba(255,80,80,.05);padding:18px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;transition:background .5s,border-color .5s,color .5s,box-shadow .5s}
+.lk.open{--c:var(--g);background:rgba(118,255,154,.08);box-shadow:0 0 24px rgba(118,255,154,.35)}
+.pl{position:relative;width:44px;height:58px;margin-bottom:6px}
+.pl .sh{position:absolute;left:8px;top:2px;width:28px;height:30px;border:5px solid currentColor;border-bottom:0;border-radius:16px 16px 0 0;transform-origin:0 100%;transition:transform .6s cubic-bezier(.3,1.6,.5,1)}
+.pl .bd{position:absolute;left:0;bottom:0;width:44px;height:30px;background:currentColor;border-radius:6px}
+.pl .bd::after{content:"";position:absolute;left:19px;top:8px;width:6px;height:11px;border-radius:3px;background:#000}
+.lk.open .sh{transform:translateY(-6px) rotate(-28deg)}
+.lkt{font-weight:700;letter-spacing:.06em}
+.lks{font-size:14px;opacity:.8}
+.cells{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 16px;margin:10px 0 4px;min-height:44px;align-items:center}
+.grp{display:flex;align-items:center;gap:4px}
+.cells input.c{width:clamp(26px,8vw,34px);height:44px;padding:0;font-size:20px;text-transform:uppercase;color:var(--c);border-color:var(--c)}
+.cells input.c::placeholder{color:var(--c);opacity:.35}
+.fx{font-size:24px;font-weight:700}
+.un{font-size:20px;font-weight:700;letter-spacing:.2em}
+.lkn{font-size:13px;opacity:.7}
+.lkm{font-size:14px;min-height:1.3em;color:#ff8a8a}
+.pr{display:flex;flex-direction:column;align-items:center;gap:14px}
+@media (prefers-reduced-motion:no-preference){
+ .lk.just{animation:jst .9s}@keyframes jst{40%{transform:scale(1.05)}}
+ .lk.shake{animation:shk .4s}@keyframes shk{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}}
+ .shots{display:flex;flex-direction:column;gap:26px;align-items:center;width:min(640px,94vw)}
+.shot{margin:0;text-align:center}
+.shot img{width:100%;display:block;border:2px solid var(--g);cursor:zoom-in}
+.shot figcaption{margin-bottom:6px;font-size:14px;opacity:.7}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<audio id="bgm" src="music.mp3" loop preload="auto"></audio>
+<button id="mute" class="mute" hidden aria-label="Toggle music">&#9835;</button>
+
+<script>
+const CONFIG = {
+  birthDate: "2008-11-06",
+  startDate: "2026-11-06",
+  passwordHash: "aiksahrv0a",         
+  photo: "photo.jpg",
+  rickroll: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  nodes: [
+    { label:"Memory_01", photo:true, x:20, y:30, kind:"santa" },
+    { label:"Do not open", x:50, y:16, kind:"rick", note:"Loading something important..." },
+    { label:"Archive", x:80, y:32, kind:"archive" },
+    { label:"Memory_02", photo:true, x:30, y:70, kind:"discord" },
+    { label:"Memory_03", photo:true, x:10, y:56, kind:"nmt" },
+    { label:"Library", x:50, y:86, kind:"library" },
+    { label:"Tetris", x:91, y:50, kind:"tetris" },
+    { label:"Polytech", x:70, y:92, kind:"polytech" },
+    { label:"THE GIFT", main:true, x:50, y:48, kind:"locks" },
+    { label:"Signal_77", x:80, y:74, kind:"riddle",
+      q:"Riddle: a genus of bush crickets in the subfamily Phaneropterinae. Species are found in Chile.", hash:"2bwe3b080wo" }
+  ]
+};
+const app = document.getElementById("app");
+const H = (s,seed=7)=>{let a=0xdeadbeef^seed,b=0x41c6ce57^seed;for(let i=0,c;i<s.length;i++){c=s.charCodeAt(i);a=Math.imul(a^c,2654435761);b=Math.imul(b^c,1597334677);}
+  a=Math.imul(a^(a>>>16),2246822507)^Math.imul(b^(b>>>13),3266489909);b=Math.imul(b^(b>>>16),2246822507)^Math.imul(a^(a>>>13),3266489909);
+  return (4294967296*(2097151&b)+(a>>>0)).toString(36)};
+const norm = s => s.toLowerCase().replace(/ё/g,"е").replace(/[^a-zа-яіїє0-9]/g,"");
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const rick = () => { location.href = CONFIG.rickroll; };
+const fmt = d => d.toLocaleDateString("en-GB",{day:"2-digit",month:"2-digit",year:"numeric"}).replace(/\//g,".");
+const S = (()=>{try{return JSON.parse(localStorage.getItem("st")||"{}")}catch(e){return {}}})();
+const save = () => { try{localStorage.setItem("st",JSON.stringify(S))}catch(e){} };
+function render(html){ document.body.className=""; document.documentElement.style.background=""; document.body.style.background=""; app.innerHTML = html; const i=app.querySelector("input"); if(i) i.focus(); }
+function intro(){
+  playMusic("intro.mp3");
+  render(`<h1 id="t0"></h1><div id="ls"></div><button class="btn" id="go" hidden>ENTER</button>`);
+  const go = document.getElementById("go");
+  typeTo(document.getElementById("t0"),"INITIALIZING SYSTEM...",65,()=>
+    typeLines(["connecting to node...","decrypting memory...","signal detected...","welcome, user.","this is not a game.","but you already started it."],
+      document.getElementById("ls"),()=>{ go.hidden=false; go.classList.add("pulse","fadein"); go.focus(); }));
+  document.getElementById("go").onclick = () => { startMusic(); S.user ? hub() : countdown(); };
+}
+function countdown(){
+  const from = new Date(CONFIG.startDate+"T00:00:00"), to = new Date(CONFIG.birthDate+"T00:00:00");
+  render(`<p class="dim">rewinding timeline...</p><div class="big" id="d">${fmt(from)}</div><p id="s">&nbsp;</p>`);
+  const d = document.getElementById("d"); let n = 0; const steps = 170;
+  const t = setInterval(()=>{
+    n++; const e = 1-Math.pow(1-n/steps,3);
+    d.textContent = fmt(new Date(+from - (from-to)*e));
+    if(n>=steps){ clearInterval(t); d.textContent = fmt(to);
+      document.getElementById("s").innerHTML = "this is where the signal began.<br>eighteen years later, it is still transmitting.";
+      setTimeout(()=>{ app.insertAdjacentHTML("beforeend",'<button class="btn" id="nx">CONTINUE</button>');
+        document.getElementById("nx").onclick = login; },1400); }
+  },55);
+}
+function login(){
+  render(`<h1>AUTHORIZATION REQUIRED</h1>
+  <p class="dim">identify yourself</p>
+  <input id="u" autocomplete="off" placeholder="> first name and last name">
+  <p class="dim" style="max-width:520px">access key: the day someone invited you to dance a waltz. eight digits, no spaces.</p>
+  <input id="p" type="password" autocomplete="off" inputmode="numeric" placeholder="> access key">
+  <div class="msg dim" id="m"></div><button class="btn" id="ok" style="margin-top:0">LOG IN</button>`);
+  document.getElementById("u").focus();
+  const go = () => {
+    const u = document.getElementById("u").value.trim(), p = document.getElementById("p").value.replace(/\D/g,"");
+    if(!u){ document.getElementById("m").textContent="name required."; return; }
+    if(H(p) === CONFIG.passwordHash){ S.user = u; save(); welcome(); }
+    else { document.getElementById("m").textContent="access denied. redirecting..."; setTimeout(rick,700); }
+  };
+  document.getElementById("ok").onclick = go;
+  app.onkeydown = e => { if(e.key==="Enter") go(); };
+}
+
+function welcome(){
+  app.onkeydown = null;
+  render(`<h1>ACCESS GRANTED</h1><p>welcome, ${esc(S.user)}.</p><p class="dim blink">building your cloud...</p>`);
+  setTimeout(hub,1800);
+}
+
+function hub(){
+  playMusic("music.mp3");
+  clearInterval(TT); document.onkeydown = null;
+  app.onkeydown = null;
+  const nodes = CONFIG.nodes.map((n,i)=>`<button class="node${n.photo?" ph":""}${n.main?" main":""}" data-i="${i}" style="left:${n.x}%;top:${n.y}%;${n.photo?`background-image:url('${CONFIG.photo}')`:""}">${n.photo?`<span>${esc(n.label)}</span>`:esc(n.label)}</button>`).join("");
+  render(`<p class="dim">${esc(S.user)}, choose a node. only one path leads out.</p><div class="hub">${nodes}</div>`);
+  app.querySelectorAll(".node").forEach(b => b.onclick = () => open(CONFIG.nodes[b.dataset.i]));
+}
+
+function open(n){
+  if(n.kind==="santa") return santa();
+  if(n.kind==="discord") return discord(0);
+  if(n.kind==="nmt") return nmt();
+  if(n.kind==="library") return library();
+  if(n.kind==="archive") return archive();
+  if(n.kind==="tetris") return tetris();
+  if(n.kind==="polytech") return polytech();
+  if(n.kind==="locks") return locks();
+  if(n.kind==="rick"){
+    render(`<p class="blink">${esc(n.note||"loading...")}</p>`); setTimeout(rick,1800); return;
+  }
+  render(`<p class="dim">${esc(n.label)}</p><p style="max-width:640px">${esc(n.q)}</p>
+    <input id="a" autocomplete="off" placeholder="> answer"><div class="msg dim" id="m"></div>
+    <button class="btn" id="ok" style="margin-top:0">SEND</button>`);
+  const go = () => {
+    const v = norm(document.getElementById("a").value); if(!v) return;
+    if(H(v) !== n.hash){ document.getElementById("m").textContent="wrong. redirecting..."; setTimeout(rick,700); return; }
+    render(`<h1>CORRECT</h1><p>but this was a decoy. nothing is stored here.</p><button class="btn" id="bk">BACK TO CLOUD</button>`);
+    document.getElementById("bk").onclick = hub;
+  };
+  document.getElementById("ok").onclick = go;
+  app.onkeydown = e => { if(e.key==="Enter") go(); };
+}
+
+const REDUCE = matchMedia("(prefers-reduced-motion: reduce)").matches;
+function typeTo(el,text,sp,done){
+  el.classList.add("cur");
+  if(REDUCE){ el.textContent=text; el.classList.remove("cur"); return done&&done(); }
+  let i=0; (function t(){ el.textContent=text.slice(0,++i);
+    if(i<text.length) setTimeout(t,sp); else { el.classList.remove("cur"); done&&done(); } })();
+}
+function typeLines(lines,box,done,sp=28){
+  let k=0; (function nx(){ if(k>=lines.length) return done&&done();
+    const p=document.createElement("p"); box.appendChild(p);
+    typeTo(p,lines[k++],sp,()=>setTimeout(nx,REDUCE?0:320)); })();
+}
+function theme(cls,bg){ document.body.className=cls; document.documentElement.style.background=bg; document.body.style.background="transparent"; }
+
+const SANTA = [
+  { title:"Too easy", hint:"You know that, don't make me laugh. It means the feeling of being proud of yourself or someone you admire.",
+    lines:["Your math teacher, Marchenko D. L., gave you a special name."],
+    hash:"1gbnjucerpl" }
+];
+function santa(){
+  playMusic("santa.mp3");
+  app.onkeydown = null;
+  render(`<p class="dim">MEMORY_01 // restored</p><h1 id="t0"></h1><div id="ls"></div><button class="btn" id="go" hidden>OPEN GIFT</button>`);
+  const go = document.getElementById("go");
+  typeTo(document.getElementById("t0"),"SECRET SANTA",90,()=>
+    typeLines(["a gift was left for you.","from: secret santa.","do you remember who that was?"],document.getElementById("ls"),
+      ()=>{ go.hidden=false; go.classList.add("pulse","fadein"); go.focus(); }));
+  go.onclick = () => puzzlePage(0);
+  addBack();
+}
+function credits(){
+app.onkeydown = null;
+const stars = Array.from({length:70},()=>`<i style="left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*4}s"></i>`).join("");
+render(`<div class="cred">${stars}
+  <p class="c1">Created by</p>
+  <p class="c2" style="animation-delay:.8s">@me_hahhha</p>
+  <p class="c3" style="animation-delay:1.8s">Inspired by</p>
+  <p class="c2" style="animation-delay:2.4s">@diavikt</p>
+  <p class="c1" style="animation-delay:3.6s">YOU WIN</p>
+  <p class="cs" style="animation-delay:4.2s">${atob("ZWFpYWhzdWY=")}</p>
+  <button class="cbtn" id="bk">Back to cloud</button></div>`);
+theme("alt th-cred","#000");
+document.getElementById("bk").onclick = hub;
+}
+function puzzlePage(i){
+  app.onkeydown = null;
+  if(i>=SANTA.length) return credits();
+  const P = SANTA[i];
+  render(`<div class="chip fadein">Long time no see, Santa. Test your luck.</div>
+    <section class="card fadein"><h2>${esc(P.title)}</h2>
+    <p class="sub">In every task use Ukrainian letters, no dots. Spaces are fine.</p>
+    <button class="hintbtn" id="hb">&#128161; Show hint</button><div class="hint" id="hint" hidden>${esc(P.hint)}</div>
+    <div class="pz">${P.lines.map(esc).join("<br>")}</div>
+    <input id="a" autocomplete="off" placeholder="Enter answer"><button class="send" id="ok">Send answer</button>
+    <div class="msg" id="m"></div></section>`);
+  theme("alt th-purple","linear-gradient(160deg,#5b6bd1,#7b4fb0 60%,#4b2f78)");
+  document.body.style.color="#fff"; document.body.style.fontFamily='system-ui,"Segoe UI",Roboto,Arial,sans-serif';
+  addBack();
+  document.getElementById("hb").onclick = () => { const h=document.getElementById("hint"); h.hidden=!h.hidden; };
+  const go = () => {
+    const v = norm(document.getElementById("a").value); if(!v) return;
+    if(H(v)===P.hash) puzzlePage(i+1);
+    else { document.getElementById("m").textContent="Wrong answer. Redirecting..."; setTimeout(rick,800); }
+  };
+  document.getElementById("ok").onclick = go;
+  app.onkeydown = e => { if(e.key==="Enter") go(); };
+}
+
+const DISCORD = Array.from({length:11},(_,i)=>({
+  name:"S"+(i+1), channel:String(i+1), welcome:true,
+  msgs:[{u:"cosmophyllum",t:"3/24/26, 8:16 PM",x:"Welcome to Stage "+(i+1)+"/11.\n\nContent for this section is coming soon."}]
+}));
+function discord(sel){
+  app.onkeydown = null;
+  const s = DISCORD[sel];
+  render(`<div class="dc"><nav class="rail" aria-label="servers">${DISCORD.map((x,i)=>`<button class="srv${i===sel?" on":""}" data-i="${i}" title="${esc(x.name)}" aria-label="${esc(x.name)}">S</button>`).join("")}</nav>
+    <aside class="chs"><div class="chh">${esc(s.name)}</div><div class="ch"># ${esc(s.channel)}</div></aside>
+    <section class="chm"><header><span># ${esc(s.channel)}</span><button class="ex" id="ex">&larr; Back</button></header>
+    <div class="msgs">${s.welcome?`<div class="wl"><h3>Welcome to ${esc(s.name)}</h3><div style="color:#949ba4">This is the beginning of this server.</div></div>`:""}
+    ${s.msgs.map(m=>`<div class="mg"><div class="av">${esc(m.u[0].toUpperCase())}</div><div><span class="mn">${esc(m.u)}</span><span class="mt">${esc(m.t)}</span><div class="mx">${esc(m.x)}</div></div></div>`).join("")}</div>
+    <div class="inp">You do not have permission to send messages in this channel.</div></section></div>`);
+  theme("alt th-discord","#1a1a1e");
+  app.querySelectorAll(".srv").forEach(b => b.onclick = () => discord(+b.dataset.i));
+  document.getElementById("ex").onclick = hub;
+}
+
+function addBack(){
+  app.insertAdjacentHTML("afterbegin",'<button class="back" id="back">&larr; Back</button>');
+  document.getElementById("back").onclick = hub;
+}
+
+const NMT = { labels:["uk","ma","hi","en"], hashes:["21c8x2mp1zc","aydswgyjig","1z6r2f0e3l6","1qr3n92up8j"] };
+function nmt(){
+  playMusic("nmt.mp3");
+  app.onkeydown = null;
+  render(`<div class="nm fadein"><div class="ic">&#128679;</div>
+    <h2>AT LAST!</h2><h2 class="gold">The algorithm is running!</h2>
+    <p class="nsub">Results of the national multi-subject test are being processed.<br>Expected completion: <b class="gold">no later than November 6</b></p>
+    <div class="bar"><i></i></div><div class="dots"><i></i><i></i><i></i></div>
+    <div class="nbox"><h3 class="gold">What is happening?</h3>
+    <p>Access to the results is closed until the algorithm finishes. Enter your four subject codes, in order, to continue.</p>
+    <div class="codes">${NMT.labels.map(l=>`<label>${l}<input inputmode="numeric" maxlength="3" autocomplete="off"></label>`).join("")}</div>
+    <div class="msg" id="m"></div><button class="gbtn" id="ok">Submit</button></div></div>`);
+  theme("alt th-nmt","linear-gradient(160deg,#0a2a7a,#0d1f9e 55%,#1423b0)");
+  document.body.style.color="#fff";
+  addBack();
+  const go = () => {
+    const v = [...app.querySelectorAll(".codes input")].map(i=>norm(i.value));
+    if(v.some(x=>!x)) return;
+    if(v.every((x,i)=>H(x)===NMT.hashes[i]))
+    app.querySelector(".nm").innerHTML = `
+  <div class="ic">&#9989;</div>
+  <h2>DONE!</h2>
+  <p class="nsub">All four codes accepted. The algorithm has finished.</p>.   <!-- The algorithm is complete.
+One last key is hidden in the results:
+the date of a confession.
+Day, month, year, no spaces.
+You were there. You remember.
+-->)
+`;
+  };
+  document.getElementById("ok").onclick = go;
+  app.onkeydown = e => { if(e.key==="Enter") go(); };
+  
+}
+
+const LIBRARY = { books:[
+  {title:"Into the Wild",color:"#b8642a",text:"THE Rusty is a house cat who has always been curious about the forest beyond his home. One day, he encounters the wild cats of ThunderClan and decides to leave his comfortable life behind to become a warrior. Renamed Firepaw, he begins training under the guidance of experienced Clan members and discovers a world governed by strict rules, ancient traditions, and fierce rivalries. Although some cats question whether a former house cat can truly become one of them, Firepaw is determined to prove his loyalty. As he makes friends and learns the ways of the forest, he also begins to notice that not everything is as peaceful as it seems. His new life brings unexpected dangers, difficult choices, and the first signs that his destiny may be greater than he imagined."},{title:"Fire and Ice",color:"#4b6a7a",text:"Now known as Fireheart, the young warrior continues to prove himself in ThunderClan while struggling to find his KEY among cats who do not fully trust him. Relations between the Clans remain tense, and the struggle for territory creates constant danger. Fireheart must balance his responsibilities as a warrior with his growing concerns about the actions of those around him. His friendship with Graystripe becomes complicated when Graystripe falls in love with Silverstream, a cat from RiverClan. Their forbidden relationship threatens to divide loyalties and create conflict between the two Clans. Meanwhile, Fireheart begins to understand that courage is not simply about fighting enemies but also about making difficult decisions and standing by the truth. As winter approaches, the cats face challenges that test their strength, loyalty, and sense of belonging."},
+  {title:"Forest of Secrets",color:"#3f6b46",text:"ThunderClan is surrounded by secrets, and Fireheart becomes increasingly determined to uncover the truth behind the events that threaten his Clan. His suspicions lead him toward discoveries that could change the way he sees his friends, family, and enemies. At the same time, Graystripe's relationship with Silverstream creates a painful conflict between friendship and duty. The warrior code demands loyalty to one's Clan, yet personal feelings are not always so easily controlled. As tensions rise, Fireheart finds himself caught between what he knows IS right and what others expect him to do. The forest holds a history that many cats would rather keep hidden, and revealing it could have serious consequences. Fireheart must decide whom he can trust while protecting ThunderClan from dangers that come not only from outside its borders but also from within."},{title:"Rising Storm",color:"#7a4a6a",text:"Life in ThunderClan becomes increasingly uncertain as Fireheart takes on greater responsibilities and learns more about the burden of leadership. The Clans face new dangers, while tensions and rivalries threaten to destroy the fragile peace of the forest. Fireheart must help protect his Clan and support its leader, Bluestar, whose behavior begins to change in troubling ways. As the situation grows more complicated, he struggles to understand what is happening and how much responsibility he should take upon YOUR. Relationships are tested, old conflicts return, and the consequences of earlier decisions become harder to ignore. Fireheart discovers that being a warrior means more than proving strength in battle; it also requires patience, judgment, and the courage to act when others cannot. As the storm approaches, ThunderClan's future becomes increasingly uncertain."},
+  {title:"A Dangerous Path",color:"#8a7a3a",text:"ThunderClan faces a series of serious threats that challenge the safety of its territory and the strength of its warriors. Fireheart, now an experienced and respected member of the Clan, must help his companions navigate dangerous situations while protecting the cats who depend on them. The forest is no longer simply a place to hunt and live; it has become a setting where every decision may carry unexpected consequences. As tensions rise between the Clans, Fireheart must confront the PERSONAL of past conflicts and question whether the warrior code alone can provide answers to every problem. His loyalty to ThunderClan remains strong, but he increasingly understands that protecting his Clan sometimes means making choices that others may not understand. The cats must rely on courage, cooperation, and trust as they approach a turning point that will change their lives forever."},{title:"The Darkest Hour",color:"#3a3a4a",text:"The struggle for the future of the forest reaches its most dangerous stage as Tigerstar's ambitions threaten every Clan. His desire for power creates a crisis that forces the warriors to reconsider their loyalties and the meaning of the warrior code. Fireheart, now Firestar, must rise to the challenge of leadership and protect ThunderClan from an enemy whose influence extends far beyond a single CREDO. The Clans face difficult decisions, and their survival depends on whether they can overcome their rivalries and stand together. Firestar must prove that a true leader earns respect through courage, fairness, and responsibility rather than fear. The events of this final book bring the first arc to a dramatic conclusion, resolving long-standing conflicts and establishing a new future for the forest. It is a story about leadership, loyalty, and the difference between seeking power and deserving it."}] };
+function library(){
+  playMusic("library.mp3");
+  app.onkeydown = null;
+  render(`<div class="lib"><div class="moon"></div>${[[12,22],[80,16],[28,64],[90,56],[56,30]].map(([a,b],i)=>`<span class="eyes" style="left:${a}%;top:${b}%;animation-delay:${i*1.4}s"><i></i><i></i></span>`).join("")}
+    <h1 class="lt">THE LIBRARY</h1><p>pick a book. the clans remember.</p>
+    <div class="shelf">${LIBRARY.books.map((b,i)=>`<button class="bk" data-i="${i}" style="background:${b.color};height:${190+(i*37%70)}px"><span>${esc(b.title)}</span></button>`).join("")}</div></div>`);
+  theme("alt th-lib","radial-gradient(ellipse at 50% 0%,#1f4a36,#07130e 70%)");
+  addBack();
+  app.querySelectorAll(".bk").forEach(b => b.onclick = () => {
+    const k = LIBRARY.books[b.dataset.i];
+    app.insertAdjacentHTML("beforeend",`<div class="pgo" id="pgo"><div class="pgp"><h2>${esc(k.title)}</h2><p>${esc(k.text||"The pages are still blank.")}</p></div></div>`);
+    document.getElementById("pgo").onclick = e => e.currentTarget.remove();
+  });
+}
+
+const ARCHIVE = { user:"di.avikt", avatar:"archive/avatar.jpg", bio:"6☆", followers:"26", following:"33",
+  highlights: Array.from({length:5},(_,l)=>({img:"archive2/"+(l+1)+".png",
+  label: ["2015-26", " 🐱", "я", "🥇", "🏙"][l]
+})),
+  posts: Array.from({length:9},(_,i)=>({img:"archive/"+(i+1)+".jpg",
+  caption:["обед", "з мамою", "в школі", "🥇", "кітик","14 шк 🥲","🌌","куховарю","😍"][i]
+})) }; 
+function archive(){
+  playMusic("open.mp3");
+  app.onkeydown = null; const A = ARCHIVE;
+  render(`<div class="ig"><nav class="igr" aria-hidden="true"><span>&#8962;</span><span>&#9906;</span><span>&#9825;</span><span>+</span></nav>
+    <div class="igm"><div class="igh"><div class="iga">${A.avatar?`<img src="${esc(A.avatar)}" alt="">`:""}</div>
+    <div><div class="igu">${esc(A.user)}</div>
+    <div class="igs"><span><b>${A.posts.length}</b> posts</span><span><b>${esc(A.followers)}</b> followers</span><span><b>${esc(A.following)}</b> following</span></div>
+    <div class="igb">${esc(A.bio)}</div></div></div>
+    <div class="igbt"><span>Edit profile</span><span>View archive</span></div>
+    <div class="igho">${A.highlights.map(h=>`<div><i>${h.img?`<img src="${esc(h.img)}" alt="">`:""}</i><span>${esc(h.label)}</span></div>`).join("")}</div>
+    <div class="igt" aria-hidden="true"><span class="on">&#9638;</span><span>&#9655;</span><span>&#9873;</span><span>&#9786;</span></div>
+    <div class="igg">${A.posts.map((p,i)=>`<button data-i="${i}" aria-label="post ${i+1}">${p.img?`<img src="${esc(p.img)}" alt="">`:""}</button>`).join("")}</div></div></div>`);
+  theme("alt th-ig","#0c1014");
+  addBack();
+  app.querySelectorAll(".igg button").forEach(b => b.onclick = () => {
+    const p = A.posts[b.dataset.i];
+    app.insertAdjacentHTML("beforeend",`<div class="lb" id="lb">${p.img?`<img src="${esc(p.img)}" alt="">`:""}<p>${esc(p.caption)}</p></div>`);
+    document.getElementById("lb").onclick = e => e.currentTarget.remove();
+  });
+}
+const bgm = document.getElementById("bgm"), muteBtn = document.getElementById("mute");
+function startMusic(){ bgm.volume = .45; bgm.play().then(()=>{ muteBtn.hidden = false; }).catch(()=>{}); }
+muteBtn.onclick = () => { bgm.muted = !bgm.muted; muteBtn.classList.toggle("off", bgm.muted); };
+function playMusic(file) {
+  const url = new URL(file, document.baseURI).href;
+
+  if (bgm.src !== url) {
+    bgm.src = url;
+    bgm.load();
+  }
+
+  bgm.volume = 0.45;
+  bgm.play()
+    .then(() => { muteBtn.hidden = false; })
+    .catch(() => {});
+}
+
+const POLY = { text:"The story is only just beginning..." };
+function polytech(){ app.onkeydown = null; render(`<h1>POLYTECH</h1><p class="dim">${esc(POLY.text)}</p>`); addBack(); }
+
+let TT = null;
+const TETRIS = { goal:10, reward:"favorite color" };
+function tetris(){
+  playMusic("tetris.mp3");
+  clearInterval(TT); app.onkeydown = null;
+  render(`<p class="dim">TETRIS // clear ${TETRIS.goal} lines. arrows + space, or buttons.</p>
+    <canvas id="tc" width="240" height="480" style="border:2px solid var(--g);height:min(60vh,480px)"></canvas><p id="ts">lines: 0 / ${TETRIS.goal}</p>
+    <div class="tpad">${[["l","&larr;"],["r","&rarr;"],["u","&#10227;"],["d","&darr;"],["h","DROP"]].map(([k,t])=>`<button data-k="${k}">${t}</button>`).join("")}</div>`);
+  addBack();
+  const c = document.getElementById("tc").getContext("2d"), W=10, Hh=20, Z=24;
+  const P = [[[1,1,1,1]],[[1,1],[1,1]],[[0,1,0],[1,1,1]],[[0,1,1],[1,1,0]],[[1,1,0],[0,1,1]],[[1,0,0],[1,1,1]],[[0,0,1],[1,1,1]]];
+  let g = Array.from({length:Hh},()=>Array(W).fill(0)), cur, x, y, lines=0, over=false, won=false;
+  const rot = m => m[0].map((_,i)=>m.map(r=>r[i]).reverse());
+  const ok = (m,px,py) => m.every((r,j)=>r.every((v,i)=>!v||(px+i>=0&&px+i<W&&py+j<Hh&&!g[py+j][px+i])));
+  const spawn = () => { cur=P[Math.random()*7|0]; x=(W-cur[0].length)/2|0; y=0; if(!ok(cur,x,y)) over=true; };
+  const lock = () => {
+    cur.forEach((r,j)=>r.forEach((v,i)=>{ if(v) g[y+j][x+i]=1; }));
+    g = g.filter(r=>r.some(v=>!v)); lines += Hh-g.length; while(g.length<Hh) g.unshift(Array(W).fill(0));
+    const ts = document.getElementById("ts"); ts.textContent = "lines: "+lines+" / "+TETRIS.goal;
+    if(lines>=TETRIS.goal){ won=true; clearInterval(TT); ts.innerHTML = "goal reached. <b>#"+esc(TETRIS.reward)+"</b>"; } else spawn();
+  };
+  const down = () => { if(ok(cur,x,y+1)) y++; else lock(); };
+  const act = { l:()=>{ if(ok(cur,x-1,y)) x--; }, r:()=>{ if(ok(cur,x+1,y)) x++; }, d:down,
+    u:()=>{ const r=rot(cur); if(ok(r,x,y)) cur=r; }, h:()=>{ while(ok(cur,x,y+1)) y++; lock(); } };
+  const draw = () => {
+    c.fillStyle="#000"; c.fillRect(0,0,W*Z,Hh*Z); c.fillStyle="#76ff9a";
+    g.forEach((r,j)=>r.forEach((v,i)=>v&&c.fillRect(i*Z+1,j*Z+1,Z-2,Z-2)));
+    if(!over&&!won) cur.forEach((r,j)=>r.forEach((v,i)=>v&&c.fillRect((x+i)*Z+1,(y+j)*Z+1,Z-2,Z-2)));
+    if(over){ c.font="18px monospace"; c.textAlign="center"; c.fillText("GAME OVER. tap to retry",W*Z/2,Hh*Z/2); }
+  };
+  document.onkeydown = e => {
+    const k = {ArrowLeft:"l",ArrowRight:"r",ArrowDown:"d",ArrowUp:"u"," ":"h"}[e.key];
+    if(k&&!over&&!won){ e.preventDefault(); act[k](); draw(); }
+    if(over&&e.key==="Enter") tetris();
+  };
+  app.querySelectorAll(".tpad button").forEach(b => b.onclick = () => { if(!over&&!won){ act[b.dataset.k](); draw(); } });
+  document.getElementById("tc").onclick = () => { if(over) tetris(); };
+  spawn(); draw();
+  TT = setInterval(()=>{ if(!over&&!won) down(); draw(); }, 500);
+}
+
+const LOCKS = [
+  { id:"santa",   icon:"\u{1F385}", title:"MEMORY_01", sub:"Secret Santa", note:"", pat:"xxxxxxxx", hash:"1rzjk2ev7ie" },
+  { id:"discord", icon:"\u{1F4AC}", title:"MEMORY_02", sub:"Discord", note:"", pat:"xx-xx-xxx", hash:"uqigcja8rn" },
+  { id:"nmt",     icon:"\u{1F6A6}", title:"MEMORY_03", sub:"NMT", note:"", pat:"xx.xx.xxxx", ph:"ddmmyyyy", num:true, hash:"ttppdsw79h" },
+  { id:"tetris",  icon:"\u{1F9F1}", title:"TETRIS", sub:"the reward", note:"", pat:"xx xxx xxx", num:true, hash:"29jvja0tqun" },
+  { id:"insta",   icon:"\u{1F4F7}", title:"ARCHIVE", sub:"Instagram 🌌", note:"", pat:"xxx xxxx", hash:"p4r9ibdr3j" },
+  { id:"phrase",  icon:"\u{1F4DA}", title:"LIBRARY", sub:"the phrase", note:"", pat:"xxxx xx xx xxxx", hash:"sy47qn7yu5" }
+];
+const PRIZE = {
+  title:"MEMORY DECRYPTED",
+  text:"you found the only way out. the first times you were mentioned in the chat:",
+  shots:["prize/1.png","prize/2.png","prize/3.png","prize/4.png", "prize/5.png"],   
+  final:"Congratulations! To be honest, I have absolutely no idea what to get you as a gift—this is the only thing that came to mind",                                   /* your personal message to Viktor (optional, line breaks allowed) */
+  end:"happy 18th birthday, Viktor."
+};
+function locks(){
+  app.onkeydown = null;
+  S.locks = S.locks || {};
+  const done = () => LOCKS.filter(l=>S.locks[l.id]).length;
+  const cells = l => { let k = 0; return l.pat.split(" ").map(g=>`<span class="grp">${[...g].map(ch=>ch==="x"
+    ? `<input class="c" maxlength="1" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="${l.num?"numeric":"text"}" placeholder="${esc((l.ph||"")[k++]||"·")}" aria-label="character ${k}">`
+    : `<span class="fx">${esc(ch)}</span>`).join("")}</span>`).join(""); };
+  const card = l => `<section class="lk${S.locks[l.id]?" open":""}" data-id="${l.id}">
+    <div class="pl"><i class="sh"></i><i class="bd"></i></div>
+    <div class="lkt">${l.icon} ${esc(l.title)}</div><div class="lks">${esc(l.sub)}</div>
+    <div class="cells">${S.locks[l.id]?'<div class="un">UNLOCKED</div>':cells(l)}</div>
+    ${l.note?`<div class="lkn">${esc(l.note)}</div>`:""}<div class="msg lkm"></div></section>`;
+  render(`<h1>THE GIFT</h1><p class="dim">six locks. six memories. open them all.</p>
+    <div class="lkbar"><i id="lkb"></i></div><p id="lkc"></p>
+    <div class="lkgrid">${LOCKS.map(card).join("")}</div><div id="lkf"></div>`);
+  addBack();
+  const progress = () => {
+    const n = done();
+    document.getElementById("lkb").style.width = (n/LOCKS.length*100)+"%";
+    document.getElementById("lkc").textContent = "locks open: "+n+" / "+LOCKS.length;
+    const f = document.getElementById("lkf");
+    if(n===LOCKS.length && !f.innerHTML){
+      f.innerHTML = '<button class="btn pulse fadein" id="pz">OPEN THE GIFT</button>';
+      document.getElementById("pz").onclick = prize;
+    }
+  };
+  const wire = el => {
+    const l = LOCKS.find(x=>x.id===el.dataset.id); if(S.locks[l.id]) return;
+    const ins = [...el.querySelectorAll("input.c")], msg = el.querySelector(".lkm");
+    const check = () => {
+      if(ins.some(i=>!i.value)) return;
+      if(H(norm(ins.map(i=>i.value).join(""))) === l.hash){
+        S.locks[l.id] = true; save(); msg.textContent = "";
+        el.classList.add("open","just"); el.querySelector(".cells").innerHTML = '<div class="un">UNLOCKED</div>';
+        progress();
+      } else {
+        msg.textContent = "wrong code. try again."; el.classList.add("shake");
+        setTimeout(()=>{ el.classList.remove("shake"); ins.forEach(i=>i.value=""); ins[0].focus(); },450);
+      }
+    };
+    ins.forEach((inp,i)=>{
+      inp.oninput = () => { inp.value = norm(inp.value).slice(0,1); msg.textContent = ""; if(inp.value && ins[i+1]) ins[i+1].focus(); check(); };
+      inp.onkeydown = e => {
+        if(e.key==="Backspace" && !inp.value && ins[i-1]){ e.preventDefault(); ins[i-1].value = ""; ins[i-1].focus(); }
+        else if(e.key==="ArrowLeft" && ins[i-1]){ e.preventDefault(); ins[i-1].focus(); }
+        else if(e.key==="ArrowRight" && ins[i+1]){ e.preventDefault(); ins[i+1].focus(); }
+        e.stopPropagation();
+      };
+      inp.onpaste = e => {
+        e.preventDefault();
+        const t = norm((e.clipboardData||window.clipboardData).getData("text"));
+        [...t].slice(0,ins.length-i).forEach((ch,j)=>{ ins[i+j].value = ch; });
+        ins[Math.min(i+t.length,ins.length-1)].focus(); check();
+      };
+      inp.onfocus = () => inp.select();
+    });
+  };
+  app.querySelectorAll(".lk").forEach(wire);
+  progress();
+}
+function prize(){
+  playMusic("hb.mp3");
+  app.onkeydown = null;
+  let k = 0;
+  render(`<div class="pr fadein"><div class="big">\u{1F381}</div><h1>${esc(PRIZE.title)}</h1><p style="max-width:640px">${esc(PRIZE.text)}</p>
+    <div class="shots" id="shots"></div><p id="pc" class="dim"></p>
+    <button class="btn pulse" id="nx">SHOW FIRST MENTION</button><div class="pr" id="fin"></div></div>`);
+  addBack();
+  const box = document.getElementById("shots"), btn = document.getElementById("nx"), pc = document.getElementById("pc");
+  box.onclick = e => {
+    const im = e.target.closest("img"); if(!im) return;
+    app.insertAdjacentHTML("beforeend",`<div class="lb" id="lb"><img src="${esc(im.src)}" alt=""></div>`);
+    document.getElementById("lb").onclick = ev => ev.currentTarget.remove();
+  };
+  btn.onclick = () => {
+    if(k>=PRIZE.shots.length) return;
+    const src = PRIZE.shots[k++];
+    box.insertAdjacentHTML("beforeend",`<figure class="shot fadein"><figcaption>mention #${k}</figcaption><img src="${esc(src)}" alt="mention ${k}" onerror="this.replaceWith('[missing image ${k}]')"></figure>`);
+    box.lastElementChild.scrollIntoView({behavior:"smooth",block:"center"});
+    pc.textContent = k+" / "+PRIZE.shots.length;
+    if(k<PRIZE.shots.length){ btn.textContent = "NEXT"; return; }
+    btn.remove();
+    const f = document.getElementById("fin");
+    f.innerHTML = (PRIZE.final?`<p class="fadein" style="max-width:640px;white-space:pre-wrap">${esc(PRIZE.final)}</p>`:"")
+      + `<h1 class="fadein">\u{1F382} ${esc(PRIZE.end)}</h1>`;
+    setTimeout(()=>f.scrollIntoView({behavior:"smooth",block:"center"}),400);
+  };
+}
+
+if(location.hash==="#make"){
+  render(`<p>hash maker</p><input id="t" placeholder="type answer"><p id="o" class="big" style="font-size:28px">-</p>`);
+  document.getElementById("t").oninput = e => { document.getElementById("o").textContent = H(norm(e.target.value)); };
+} else intro();
+</script>
+<script src="discord.js"></script>
+</body>
+</html>
