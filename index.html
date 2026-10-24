@@ -244,8 +244,8 @@ function login(){
   const go = () => {
     const u = document.getElementById("u").value.trim(), p = document.getElementById("p").value.replace(/\D/g,"");
     if(!u){ document.getElementById("m").textContent="name required."; return; }
-    if(H(p) === CONFIG.passwordHash){ S.user = u; save(); welcome(); }
-    else { document.getElementById("m").textContent="access denied. redirecting..."; setTimeout(rick,700); }
+    if(H(p) === CONFIG.passwordHash){ S.user = u; track("login-ok"); save(); welcome(); }
+    else { document.getElementById("m").textContent="access denied. redirecting..."; track("login-fail"); setTimeout(rick,700); }
   };
   document.getElementById("ok").onclick = go;
   app.onkeydown = e => { if(e.key==="Enter") go(); };
@@ -353,8 +353,8 @@ function puzzlePage(i){
   document.getElementById("hb").onclick = () => { const h=document.getElementById("hint"); h.hidden=!h.hidden; };
   const go = () => {
     const v = norm(document.getElementById("a").value); if(!v) return;
-    if(H(v)===P.hash) puzzlePage(i+1);
-    else { document.getElementById("m").textContent="Wrong answer. Redirecting..."; setTimeout(rick,800); }
+    if(H(v)===P.hash){ track("santa-solved"); puzzlePage(i+1); }
+    else { document.getElementById("m").textContent="Wrong answer. Redirecting..."; track("santa-wrong"); setTimeout(rick,800); }
   };
   document.getElementById("ok").onclick = go;
   app.onkeydown = e => { if(e.key==="Enter") go(); };
@@ -402,6 +402,7 @@ function nmt(){
     const v = [...app.querySelectorAll(".codes input")].map(i=>norm(i.value));
     if(v.some(x=>!x)) return;
     if(v.every((x,i)=>H(x)===NMT.hashes[i]))
+      track("nmt-solved");
     app.querySelector(".nm").innerHTML = `
   <div class="ic">&#9989;</div>
   <h2>DONE!</h2>
@@ -503,7 +504,7 @@ function tetris(){
     cur.forEach((r,j)=>r.forEach((v,i)=>{ if(v) g[y+j][x+i]=1; }));
     g = g.filter(r=>r.some(v=>!v)); lines += Hh-g.length; while(g.length<Hh) g.unshift(Array(W).fill(0));
     const ts = document.getElementById("ts"); ts.textContent = "lines: "+lines+" / "+TETRIS.goal;
-    if(lines>=TETRIS.goal){ won=true; clearInterval(TT); ts.innerHTML = "goal reached. <b>#"+esc(TETRIS.reward)+"</b>"; } else spawn();
+    if(lines>=TETRIS.goal){track("tetris-won"); won=true; clearInterval(TT); ts.innerHTML = "goal reached. <b>#"+esc(TETRIS.reward)+"</b>"; } else spawn();
   };
   const down = () => { if(ok(cur,x,y+1)) y++; else lock(); };
   const act = { l:()=>{ if(ok(cur,x-1,y)) x--; }, r:()=>{ if(ok(cur,x+1,y)) x++; }, d:down,
@@ -572,10 +573,11 @@ function locks(){
     const check = () => {
       if(ins.some(i=>!i.value)) return;
       if(H(norm(ins.map(i=>i.value).join(""))) === l.hash){
-        S.locks[l.id] = true; save(); msg.textContent = "";
+        S.locks[l.id] = true; save(); track("lock-open-"+l.id); msg.textContent = "";
         el.classList.add("open","just"); el.querySelector(".cells").innerHTML = '<div class="un">UNLOCKED</div>';
         progress();
       } else {
+        track("lock-wrong-"+l.id);
         msg.textContent = "wrong code. try again."; el.classList.add("shake");
         setTimeout(()=>{ el.classList.remove("shake"); ins.forEach(i=>i.value=""); ins[0].focus(); },450);
       }
@@ -601,6 +603,7 @@ function locks(){
   progress();
 }
 function prize(){
+  track("prize-opened");
   playMusic("hb.mp3");
   app.onkeydown = null;
   let k = 0;
@@ -617,11 +620,13 @@ function prize(){
   btn.onclick = () => {
     if(k>=PRIZE.shots.length) return;
     const src = PRIZE.shots[k++];
+    track("prize-mention-"+k);
     box.insertAdjacentHTML("beforeend",`<figure class="shot fadein"><figcaption>mention #${k}</figcaption><img src="${esc(src)}" alt="mention ${k}" onerror="this.replaceWith('[missing image ${k}]')"></figure>`);
     box.lastElementChild.scrollIntoView({behavior:"smooth",block:"center"});
     pc.textContent = k+" / "+PRIZE.shots.length;
     if(k<PRIZE.shots.length){ btn.textContent = "NEXT"; return; }
     btn.remove();
+    track("prize-finished");
     const f = document.getElementById("fin");
     f.innerHTML = (PRIZE.final?`<p class="fadein" style="max-width:640px;white-space:pre-wrap">${esc(PRIZE.final)}</p>`:"")
       + `<h1 class="fadein">\u{1F382} ${esc(PRIZE.end)}</h1>`;
